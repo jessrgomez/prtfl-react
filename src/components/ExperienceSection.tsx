@@ -1,0 +1,214 @@
+import { useAnimateOnScroll } from '../composables/useAnimateOnScroll'
+
+const jobs = [
+  {
+    title: 'Frontend Developer',
+    company: 'DigiPlus Interactive Corp.',
+    logo: 'DP',
+    url: 'https://digiplus.com.ph/',
+    period: 'November 2025 – Present',
+    bullets: [
+      "Delivered 20+ frontend enhancements across an iGaming platform's (AP) Versions 1 and 2, improving user experience and system functionality.",
+      "Grew a third-party sportsbook API integration into AP's broader sportsbook experience — horse and greyhound racing, live-streamed races, and parlay/singles wagering.",
+      "Built AP's Loyalty Club end-to-end across desktop and mobile, including tier progression, rank-up UI, and refer-a-friend statistics, alongside message notification features on both web and AP v1's mobile app.",
+      "Contributed to AP's Community v2 module, building the post binding, hashtag, and follower/profile features.",
+      'Shipped brand partnership updates, PAGCOR compliance/betting rules changes, and login/verification fixes across iOS and Android on the mobile app.',
+      'Currently building the Transactions module and third-party sportsbook bet slip experience for a new retail-focused AP app, a new Vue 3 + TypeScript platform, alongside the frontend team.',
+      'Collaborated with 10+ cross-functional teammates across Product, QA, UI/UX, and Backend.',
+      'Supported multiple production deployments with minimal downtime while resolving issues and optimizing performance.',
+      'Collaborated with backend developers using Spring Boot and MySQL.',
+      'Use Claude AI and Cursor AI daily for development, defining project-specific rules and guardrails in markdown config files (e.g., CLAUDE.md) to guide code style, safe automation boundaries, and consistent behavior across the codebase.'
+    ],
+    tech: [
+      'VueJS',
+      'TypeScript',
+      'JavaScript (ES6+)',
+      'HTML5',
+      'CSS3',
+      'Pinia',
+      'Vuex',
+      'TanStack Query',
+      'TailwindCSS',
+      'REST APIs',
+      'Axios',
+      'Git',
+      'SourceTree',
+      'Figma',
+      'Cursor AI',
+      'Claude AI'
+    ],
+    projects: ['Maintenance of Back Office Systems', 'AP v1', 'AP v2', 'AP Sportsbook Integration', 'AP Community v2', 'AP Retail App']
+  },
+  {
+    title: 'VueJS Developer',
+    company: 'ThinkBIT Solutions',
+    logo: 'TB',
+    url: 'https://thinkbitsolutions.com/',
+    period: 'July 2025 – October 2025',
+    bullets: [
+      'Built and maintained VueJS applications for client-facing and internal workflows.',
+      'Integrated frontend features with Laravel/PHP backends through REST API collaboration.',
+      'Supported testing, troubleshooting, deployment, and ongoing maintenance across multiple releases.'
+    ],
+    tech: ['VueJS', 'JavaScript (ES6+)', 'HTML5', 'CSS3', 'Laravel', 'PHP', 'REST APIs', 'Git', 'Figma'],
+    projects: ['Bingo Pilipino']
+  },
+  {
+    title: 'Frontend Developer | Project Coordinator',
+    company: 'Global JD Holdings Inc.',
+    logo: 'JD',
+    url: 'https://www.linkedin.com/company/global-jd-holdings',
+    period: 'December 2021 – June 2025',
+    bullets: [
+      'Led both frontend development and project coordination for Sapphire Portal and the Sapphire In-Flight Entertainment System, including their sync connection across platforms.',
+      'Managed client communications, technical documentation, and project requirements from discovery through delivery.',
+      'Collaborated with local and international stakeholders to align timelines, scope, and technical expectations throughout each project lifecycle.',
+      'Mentored OJT students and junior developers, supporting their growth while maintaining delivery quality on production systems.',
+      'Successfully delivered scalable applications across aviation and transportation industries, including Aerovault and ERP System.',
+      'Also built the Sapphire Website, Aerostrategies Timesheet Portal, and Sapphire City Website, extending the Sapphire ecosystem across marketing, timesheet management, and blockchain real estate use cases.'
+    ],
+    tech: ['VueJS', 'ReactJS', 'JavaScript (ES6+)', 'HTML5', 'CSS3', 'BootstrapVue', 'REST APIs', 'Axios', 'Swagger', 'NodeJS', 'ExpressJS', 'Git', 'Figma'],
+    projects: ['Sapphire Portal', 'Sapphire IFE System', 'ERP System', 'Aerovault', 'Sapphire Website', 'Aerostrategies Timesheet Portal', 'Sapphire City Website']
+  },
+  {
+    title: 'Frontend Developer (Part-Time)',
+    company: 'Ho Chi Minh, Vietnam',
+    logo: 'SV',
+    url: '',
+    period: 'September 2020 – February 2022',
+    bullets: [
+      'Developed booking systems and reporting portals used by travel operations teams.',
+      'Designed dashboards and data visualizations with Highcharts to improve decision-making.',
+      'Worked with designers and backend developers to refine usability and end-to-end workflows.'
+    ],
+    tech: ['VueJS', 'JavaScript (ES6+)', 'HTML5', 'CSS3', 'Highcharts', 'NodeJS', 'Swagger', 'Git', 'Figma'],
+    projects: ['Sentravel Booking System', 'Sentravel Reporting System']
+  },
+  {
+    title: 'Programmer & Systems Analyst',
+    company: 'Dornier Technology Inc.',
+    logo: 'DT',
+    url: 'https://dorniertechnology.com/',
+    period: 'May 2018 – December 2021',
+    bullets: [
+      'Started developing aviation-related systems, including the Sapphire IFE platform.',
+      'Started designing and developing a CMS application (Sapphire Portal) and company websites.',
+      'Collaborated with backend teams for API integrations.',
+      'Developed reusable frontend components to improve development efficiency.',
+      'Maintained OJT records and attendance.'
+    ],
+    tech: ['VueJS', 'JavaScript (ES6+)', 'HTML5', 'CSS3', 'REST APIs', 'NodeJS', 'Swagger', 'Git', 'Figma'],
+    projects: ['Sapphire IFE System', 'Sapphire Portal', 'Fleet Technical Management System']
+  }
+]
+
+const additionalJobs = [
+  {
+    title: 'Data Entry Specialist',
+    company: 'Upwork',
+    url: 'https://www.upwork.com/',
+    period: 'May 2019 – July 2019',
+    bullets: ['Validated data and prepared reports for client deliverables.', 'Maintained accurate spreadsheet documentation.']
+  },
+  {
+    title: 'Administrative Assistant',
+    company: '',
+    period: 'March 2018 – May 2018',
+    bullets: ['Managed administrative documentation and filing.', 'Prepared reports and meeting minutes to support daily operations.']
+  },
+  {
+    title: 'Programmer (OJT)',
+    company: 'Dornier Technology',
+    period: 'June 2017 – September 2017',
+    bullets: ['Built hybrid mobile application features during on-the-job training.', 'Worked with Firebase and database management for app data flows.']
+  }
+]
+
+export default function ExperienceSection() {
+  const { target, isVisible } = useAnimateOnScroll<HTMLElement>()
+
+  return (
+    <section id="experience" ref={target} className={`section experience ${isVisible ? 'animate-in' : ''}`}>
+      <h2 className="section-title">
+        <span className="title-num">04.</span> Career
+      </h2>
+      <div className="timeline">
+        {jobs.map((job) => (
+          <article key={job.company + job.period} className="timeline-item">
+            <div className="timeline-marker" aria-hidden="true"></div>
+            <div className="timeline-card">
+              <div className="timeline-header">
+                <div className="timeline-heading">
+                  <div className="company-logo" aria-hidden="true">
+                    {job.logo}
+                  </div>
+                  <div>
+                    <h3>{job.title}</h3>
+                    {job.url ? (
+                      <a className="timeline-company timeline-company-link" href={job.url} target="_blank" rel="noopener noreferrer">
+                        {job.company}
+                        <span className="company-link-icon" aria-hidden="true">
+                          ↗
+                        </span>
+                      </a>
+                    ) : (
+                      <p className="timeline-company">{job.company}</p>
+                    )}
+                  </div>
+                </div>
+                <span className="timeline-period">{job.period}</span>
+              </div>
+              <ul className="timeline-bullets">
+                {job.bullets.map((bullet, i) => (
+                  <li key={i}>{bullet}</li>
+                ))}
+              </ul>
+              {job.projects && (
+                <div className="timeline-projects">
+                  <span className="timeline-projects-label">Projects:</span>
+                  {job.projects.map((project) => (
+                    <span key={project} className="skill-tag">
+                      {project}
+                    </span>
+                  ))}
+                </div>
+              )}
+              <div className="project-tech timeline-tech">
+                {job.tech.map((tech) => (
+                  <span key={tech}>{tech}</span>
+                ))}
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <h3 className="subsection-title">Additional Experience</h3>
+      <div className="additional-grid">
+        {additionalJobs.map((job) => (
+          <article key={job.title + job.period} className="additional-card">
+            <div className="additional-header">
+              <h4>{job.title}</h4>
+              <span className="timeline-period">{job.period}</span>
+            </div>
+            {job.company && job.url ? (
+              <a className="timeline-company timeline-company-link" href={job.url} target="_blank" rel="noopener noreferrer">
+                {job.company}
+                <span className="company-link-icon" aria-hidden="true">
+                  ↗
+                </span>
+              </a>
+            ) : job.company ? (
+              <p className="timeline-company">{job.company}</p>
+            ) : null}
+            <ul className="timeline-bullets">
+              {job.bullets.map((bullet, i) => (
+                <li key={i}>{bullet}</li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </section>
+  )
+}
