@@ -1,0 +1,42 @@
+[
+  {
+    "id": "experience",
+    "label": "Experience",
+    "content": "8 years of experience as a Frontend Developer (Aviation, Travel, Enterprise, Gaming industries). Currently Frontend Developer at DigiPlus Interactive Corp., working on their iGaming platform (AP)."
+  },
+  {
+    "id": "skills",
+    "label": "Skills",
+    "content": "Core stack: Vue 2/3, React, JavaScript (ES6+), TypeScript, TailwindCSS, BootstrapVue, REST APIs, Pinia, TanStack Query, Node.js. Tools: Git, GitLab, Huawei Cloud, Figma, Claude AI, Cursor AI."
+  },
+  {
+    "id": "projects",
+    "label": "Projects",
+    "content": "Projects: iGaming Platform (AP v1, v2, Community, Retail App) for DigiPlus; Sapphire Portal and In-Flight Entertainment System, Atlas ERP System, Aerovault Tracking System for Global JD Holdings."
+  },
+  {
+    "id": "education",
+    "label": "Education",
+    "content": "Education: BS Information Technology (Web Development), Holy Angel University, 2014-2018, Dean's Lister 2018. Certifications in Data Privacy Compliance, AWS, Advanced SEO."
+  },
+  {
+    "id": "location",
+    "label": "Location",
+    "content": "Based in Pampanga, Philippines (UTC+8), open to remote and on-site opportunities."
+  },
+  {
+    "id": "contact",
+    "label": "Contact",
+    "content": "Contact: via the Contact section form on the site, or her CV (download button in the header)."
+  },
+  {
+    "id": "3edddb23-3d12-4244-93ad-e3bc962be463",
+    "label": "Certifications",
+    "content": "Data Privacy Compliance\nAWS Summit Online\nAWS Data, Database and Analytics\nAdvanced SEO\nCSS Processor and Web Security Measures"
+  },
+  {
+    "id": "9cd54163-a21e-4232-bb19-2cb1800eb0a7",
+    "label": "Language",
+    "content": "Filipino\nEnglish"
+  }
+]

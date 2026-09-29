@@ -1,11 +1,38 @@
-import { useRef, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 
 interface Message {
   role: 'bot' | 'user'
   text: string
 }
 
+interface KnowledgeEntry {
+  id: string
+  label: string
+  content: string
+}
+
 const suggestions = ['Experience', 'Skills', 'Projects', 'Contact', 'CV']
+
+// Broader synonym lists for the CMS-editable knowledge categories, so matching
+// stays as forgiving as the original hardcoded bot. Entries added later through
+// the CMS (with a generated id) fall back to matching on their label instead.
+const knowledgeKeywords: Record<string, string[]> = {
+  experience: ['experience', 'years', 'background', 'work history', 'career'],
+  skills: ['skill', 'tech stack', 'technolog', 'stack', 'tools', 'language'],
+  projects: ['project', 'portfolio', 'built', 'igaming', 'sapphire', 'atlas', 'aerovault'],
+  education: ['education', 'school', 'degree', 'university', 'college', 'study'],
+  contact: ['contact', 'email', 'hire', 'available', 'reach', 'get in touch'],
+  location: ['location', 'based', 'where', 'philippines', 'remote']
+}
+
+function matchLiveKnowledge(text: string, entries: KnowledgeEntry[]): string | undefined {
+  const normalized = text.toLowerCase()
+  const match = entries.find((entry) => {
+    const keywords = knowledgeKeywords[entry.id] ?? entry.label.toLowerCase().split(/\s+/)
+    return keywords.some((keyword) => normalized.includes(keyword))
+  })
+  return match?.content
+}
 
 const knowledgeBase = [
   {
@@ -74,6 +101,27 @@ function findResponse(text: string) {
     : "I don't have a specific answer for that, but you can ask about Jessica's experience, skills, projects, her CV, or contact details — or reach her directly through the Contact section below."
 }
 
+async function fetchAiResponse(text: string, history: Message[]): Promise<string> {
+  const response = await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message: text, history }),
+    // Fall back to the offline knowledge match rather than leaving the user
+    // waiting indefinitely if the AI service is slow or overloaded.
+    signal: AbortSignal.timeout(8000)
+  })
+
+  if (!response.ok) {
+    throw new Error(`Chat API responded with ${response.status}`)
+  }
+
+  const data = await response.json()
+  if (typeof data.reply !== 'string') {
+    throw new Error('Chat API returned an unexpected response')
+  }
+  return data.reply
+}
+
 export default function AiChatbot() {
   const [isOpen, setIsOpen] = useState(false)
   const [inputText, setInputText] = useState('')
@@ -83,7 +131,28 @@ export default function AiChatbot() {
       text: "Hi! I'm Jessica's assistant. Ask me about her experience, skills, projects, her CV, or how to get in touch."
     }
   ])
+  const [isTyping, setIsTyping] = useState(false)
+  const [chipLabels, setChipLabels] = useState<string[]>(suggestions)
   const messagesEl = useRef<HTMLDivElement | null>(null)
+
+  // Fetched fresh on every fallback (not cached in state) so a CMS edit made
+  // after this page loaded is still picked up, instead of answering from a
+  // stale snapshot taken when the chat widget first mounted.
+  async function fetchLiveKnowledge(): Promise<KnowledgeEntry[]> {
+    const res = await fetch('/api/knowledge')
+    if (!res.ok) throw new Error(`Knowledge API responded with ${res.status}`)
+    return res.json()
+  }
+
+  // Re-pull the suggestion chips from the CMS every time the panel opens, so a
+  // newly added entry (e.g. "Certifications") appears as a chip without a
+  // page reload. Falls back to the static list on a static-only deployment.
+  useEffect(() => {
+    if (!isOpen) return
+    fetchLiveKnowledge()
+      .then((entries) => setChipLabels(entries.map((entry) => entry.label)))
+      .catch(() => {})
+  }, [isOpen])
 
   const scrollToBottom = () => {
     requestAnimationFrame(() => {
@@ -93,16 +162,26 @@ export default function AiChatbot() {
     })
   }
 
-  const sendMessage = (text: string) => {
+  const sendMessage = async (text: string) => {
     const trimmed = text.trim()
     if (!trimmed) return
+    const history = messages
     setMessages((msgs) => [...msgs, { role: 'user', text: trimmed }])
     setInputText('')
+    setIsTyping(true)
     scrollToBottom()
-    window.setTimeout(() => {
-      setMessages((msgs) => [...msgs, { role: 'bot', text: findResponse(trimmed) }])
-      scrollToBottom()
-    }, 350)
+
+    let reply: string
+    try {
+      reply = await fetchAiResponse(trimmed, history)
+    } catch {
+      const liveKnowledge = await fetchLiveKnowledge().catch(() => [])
+      reply = matchLiveKnowledge(trimmed, liveKnowledge) ?? findResponse(trimmed)
+    }
+
+    setIsTyping(false)
+    setMessages((msgs) => [...msgs, { role: 'bot', text: reply }])
+    scrollToBottom()
   }
 
   const handleSubmit = (e: FormEvent) => {
@@ -137,12 +216,25 @@ export default function AiChatbot() {
                 {message.text}
               </div>
             ))}
+            {isTyping && (
+              <div className="ai-chatbot-message ai-chatbot-message--bot ai-chatbot-typing" aria-live="polite">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            )}
           </div>
 
           <div className="ai-chatbot-suggestions">
-            {suggestions.map((suggestion) => (
-              <button key={suggestion} type="button" className="ai-chatbot-chip" onClick={() => sendMessage(suggestion)}>
-                {suggestion}
+            {chipLabels.map((label) => (
+              <button
+                key={label}
+                type="button"
+                className="ai-chatbot-chip"
+                disabled={isTyping}
+                onClick={() => sendMessage(label)}
+              >
+                {label}
               </button>
             ))}
           </div>
@@ -158,9 +250,10 @@ export default function AiChatbot() {
               placeholder="Ask a question…"
               autoComplete="off"
               value={inputText}
+              disabled={isTyping}
               onChange={(e) => setInputText(e.target.value)}
             />
-            <button type="submit" className="ai-chatbot-send" aria-label="Send message">
+            <button type="submit" className="ai-chatbot-send" aria-label="Send message" disabled={isTyping}>
               ➤
             </button>
           </form>

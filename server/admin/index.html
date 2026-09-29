@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Bot CMS · Jessica Gomez</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg-primary: #0a0e17;
+      --bg-secondary: #111827;
+      --bg-card: #1a2234;
+      --accent: #22d3ee;
+      --accent-dim: #0891b2;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --border: #334155;
+      --font-sans: 'Outfit', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
+    }
+
+    header {
+      display: flex;
+      align-items: baseline;
+      gap: 0.6rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .logo {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    p.subtitle {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin: 0 0 1.75rem;
+    }
+
+    .token-bar { display: flex; gap: 0.5rem; margin-bottom: 1.25rem; }
+
+    input, textarea {
+      width: 100%;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      padding: 0.6rem 0.75rem;
+      font: inherit;
+      font-size: 0.9rem;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    textarea { min-height: 4.5rem; resize: vertical; }
+
+    label {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.3rem;
+    }
+
+    .field { margin-bottom: 0.75rem; }
+
+    .entry {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .entry-actions { display: flex; gap: 0.5rem; margin-top: 0.6rem; }
+
+    button {
+      cursor: pointer;
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-primary);
+      font: inherit;
+      font-size: 0.85rem;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    button:hover { border-color: var(--accent); color: var(--accent); }
+
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--bg-primary);
+      font-weight: 600;
+    }
+
+    button.primary:hover { background: var(--accent-dim); border-color: var(--accent-dim); color: var(--bg-primary); }
+
+    button.danger:hover { border-color: #f87171; color: #f87171; }
+
+    #status { min-height: 1.2rem; font-size: 0.85rem; margin-bottom: 1rem; color: var(--text-secondary); }
+
+    #new-entry {
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-top: 2rem;
+    }
+
+    #new-entry.hidden,
+    #entries.hidden {
+      display: none;
+    }
+
+    #new-entry h3 {
+      margin: 0 0 0.75rem;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="logo">&lt;JG/&gt;</span>
+    <h1>Bot CMS</h1>
+  </header>
+  <p class="subtitle">Edit what the AI chatbot knows about Jessica. Changes apply immediately to new chat replies.</p>
+
+  <div class="token-bar">
+    <input id="token" type="password" placeholder="Admin token" />
+    <button id="load" class="primary">Load</button>
+  </div>
+  <div id="status"></div>
+
+  <div id="entries" class="hidden"></div>
+
+  <div id="new-entry" class="hidden">
+    <h3>Add entry</h3>
+    <div class="field">
+      <label for="new-label">Label</label>
+      <input id="new-label" placeholder="e.g. Skills" />
+    </div>
+    <div class="field">
+      <label for="new-content">Content</label>
+      <textarea id="new-content" placeholder="Content the bot can use in its answers"></textarea>
+    </div>
+    <div class="entry-actions">
+      <button id="add" class="primary">Add entry</button>
+    </div>
+  </div>
+
+  <script>
+    const tokenInput = document.getElementById('token')
+    const statusEl = document.getElementById('status')
+    const entriesEl = document.getElementById('entries')
+    const newEntryEl = document.getElementById('new-entry')
+
+    const saved = localStorage.getItem('cms-admin-token')
+    if (saved) tokenInput.value = saved
+
+    function authHeaders() {
+      return { 'x-admin-token': tokenInput.value, 'Content-Type': 'application/json' }
+    }
+
+    function setStatus(text, isError) {
+      statusEl.textContent = text
+      statusEl.style.color = isError ? '#f87171' : ''
+    }
+
+    async function loadEntries() {
+      localStorage.setItem('cms-admin-token', tokenInput.value)
+      setStatus('Loading…')
+      try {
+        const res = await fetch('/api/admin/knowledge', { headers: authHeaders() })
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}))
+          throw new Error(body.error || `Request failed (${res.status})`)
+        }
+        render(await res.json())
+        entriesEl.classList.remove('hidden')
+        newEntryEl.classList.remove('hidden')
+        setStatus('')
+      } catch (err) {
+        entriesEl.innerHTML = ''
+        entriesEl.classList.add('hidden')
+        newEntryEl.classList.add('hidden')
+        setStatus(err.message, true)
+      }
+    }
+
+    function render(entries) {
+      entriesEl.innerHTML = ''
+      for (const entry of entries) {
+        const card = document.createElement('div')
+        card.className = 'entry'
+        card.innerHTML = `
+          <div class="field">
+            <label>Label</label>
+            <input class="label" value="${escapeHtml(entry.label)}" />
+          </div>
+          <div class="field">
+            <label>Content</label>
+            <textarea class="content">${escapeHtml(entry.content)}</textarea>
+          </div>
+          <div class="entry-actions">
+            <button class="save primary">Save</button>
+            <button class="danger delete">Delete</button>
+          </div>
+        `
+        card.querySelector('.save').addEventListener('click', () => saveEntry(entry.id, card))
+        card.querySelector('.delete').addEventListener('click', () => deleteEntry(entry.id))
+        entriesEl.appendChild(card)
+      }
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
+    }
+
+    async function saveEntry(id, card) {
+      const label = card.querySelector('.label').value
+      const content = card.querySelector('.content').value
+      setStatus('Saving…')
+      try {
+        const res = await fetch(`/api/admin/knowledge/${id}`, {
+          method: 'PUT',
+          headers: authHeaders(),
+          body: JSON.stringify({ label, content })
+        })
+        if (!res.ok) throw new Error((await res.json()).error || 'Save failed')
+        setStatus('Saved.')
+      } catch (err) {
+        setStatus(err.message, true)
+      }
+    }
+
+    async function deleteEntry(id) {
+      if (!confirm('Delete this entry?')) return
+      setStatus('Deleting…')
+      try {
+        const res = await fetch(`/api/admin/knowledge/${id}`, { method: 'DELETE', headers: authHeaders() })
+        if (!res.ok && res.status !== 204) throw new Error((await res.json()).error || 'Delete failed')
+        await loadEntries()
+      } catch (err) {
+        setStatus(err.message, true)
+      }
+    }
+
+    document.getElementById('add').addEventListener('click', async () => {
+      const label = document.getElementById('new-label').value
+      const content = document.getElementById('new-content').value
+      setStatus('Adding…')
+      try {
+        const res = await fetch('/api/admin/knowledge', {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify({ label, content })
+        })
+        if (!res.ok) throw new Error((await res.json()).error || 'Add failed')
+        document.getElementById('new-label').value = ''
+        document.getElementById('new-content').value = ''
+        await loadEntries()
+      } catch (err) {
+        setStatus(err.message, true)
+      }
+    })
+
+    document.getElementById('load').addEventListener('click', loadEntries)
+    if (saved) loadEntries()
+  </script>
+</body>
+</html>

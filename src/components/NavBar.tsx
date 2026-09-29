@@ -94,6 +94,9 @@ export default function NavBar() {
           ))}
         </ul>
         <div className="nav-actions">
+          <a href="/admin/" target="_blank" rel="noopener noreferrer" className="nav-cms-link">
+            Bot CMS
+          </a>
           <button
             className="theme-toggle"
             type="button"

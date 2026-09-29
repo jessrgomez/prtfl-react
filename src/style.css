@@ -267,6 +267,27 @@ textarea {
   gap: 0.5rem;
 }
 
+.nav-cms-link {
+  display: inline-flex;
+  align-items: center;
+  height: 2.25rem;
+  padding: 0 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.nav-cms-link:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
 .theme-toggle {
   display: inline-flex;
   align-items: center;
@@ -2020,6 +2041,41 @@ textarea {
   color: var(--bg-primary);
 }
 
+.ai-chatbot-typing {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.7rem 0.85rem;
+}
+
+.ai-chatbot-typing span {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--text-secondary);
+  opacity: 0.5;
+  animation: ai-chatbot-bounce 1s infinite ease-in-out;
+}
+
+.ai-chatbot-typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.ai-chatbot-typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes ai-chatbot-bounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
 .ai-chatbot-suggestions {
   display: flex;
   flex-wrap: wrap;
@@ -2036,6 +2092,13 @@ textarea {
   font-size: 0.75rem;
   cursor: pointer;
   transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.ai-chatbot-chip:disabled,
+.ai-chatbot-input:disabled,
+.ai-chatbot-send:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .ai-chatbot-chip:hover {
