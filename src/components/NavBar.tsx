@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { scrollToSection } from '../utils/scroll'
 import { useTheme } from '../composables/useTheme'
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? ''
+
 const sections = [
   { id: 'about', label: 'About' },
   { id: 'skills', label: 'Skills' },
@@ -94,7 +96,7 @@ export default function NavBar() {
           ))}
         </ul>
         <div className="nav-actions">
-          <a href="/admin/" target="_blank" rel="noopener noreferrer" className="nav-cms-link">
+          <a href={`${API_BASE}/admin/`} target="_blank" rel="noopener noreferrer" className="nav-cms-link">
             Bot CMS
           </a>
           <button

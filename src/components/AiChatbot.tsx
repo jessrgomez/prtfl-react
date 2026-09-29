@@ -13,6 +13,11 @@ interface KnowledgeEntry {
 
 const suggestions = ['Experience', 'Skills', 'Projects', 'Contact', 'CV']
 
+// Empty in local dev (requests go through Vite's proxy to localhost:8787).
+// Set at build time to the deployed backend's URL for a static production
+// build (e.g. GitHub Pages), which has no dev proxy to rely on.
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? ''
+
 // Broader synonym lists for the CMS-editable knowledge categories, so matching
 // stays as forgiving as the original hardcoded bot. Entries added later through
 // the CMS (with a generated id) fall back to matching on their label instead.
@@ -102,7 +107,7 @@ function findResponse(text: string) {
 }
 
 async function fetchAiResponse(text: string, history: Message[]): Promise<string> {
-  const response = await fetch('/api/chat', {
+  const response = await fetch(`${API_BASE}/api/chat`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ message: text, history }),
@@ -139,7 +144,7 @@ export default function AiChatbot() {
   // after this page loaded is still picked up, instead of answering from a
   // stale snapshot taken when the chat widget first mounted.
   async function fetchLiveKnowledge(): Promise<KnowledgeEntry[]> {
-    const res = await fetch('/api/knowledge')
+    const res = await fetch(`${API_BASE}/api/knowledge`)
     if (!res.ok) throw new Error(`Knowledge API responded with ${res.status}`)
     return res.json()
   }
