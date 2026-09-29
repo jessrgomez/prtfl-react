@@ -2198,6 +2198,12 @@ textarea {
   width: 48px;
   height: 48px;
   z-index: 3;
+  transform: translate(-50%, -50%);
+}
+
+.float-icon-body {
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2207,24 +2213,19 @@ textarea {
   animation: floatOrbit 6s ease-in-out infinite;
 }
 
-.float-icon:nth-child(1) { animation-delay: 0s; }
-.float-icon:nth-child(2) { animation-delay: 0.5s; }
-.float-icon:nth-child(3) { animation-delay: 1s; }
-.float-icon:nth-child(4) { animation-delay: 0.3s; }
-.float-icon:nth-child(5) { animation-delay: 0.8s; }
-.float-icon:nth-child(6) { animation-delay: 0.2s; }
-
-.float-icon:hover {
+.float-icon-body:hover {
   transform: scale(1.15);
 }
 
-.float-icon svg {
+.float-icon svg,
+.float-image {
   width: 100%;
   height: 100%;
   border-radius: 10px;
   background: var(--bg-card);
   padding: 6px;
   box-sizing: border-box;
+  object-fit: contain;
 }
 
 .float-fallback {
@@ -2247,13 +2248,6 @@ textarea {
   color: var(--text-secondary);
   font-weight: 600;
 }
-
-.pos-0 { top: 8%; left: 12%; }
-.pos-1 { top: 5%; right: 15%; }
-.pos-2 { bottom: 15%; left: 8%; }
-.pos-3 { bottom: 12%; right: 10%; }
-.pos-4 { top: 50%; left: 0; transform: translateY(-50%); }
-.pos-5 { top: 50%; right: 0; transform: translateY(-50%); }
 
 @keyframes developerFloat {
   0%, 100% { transform: translateY(0); }
@@ -2297,9 +2291,4 @@ textarea {
     width: 40px;
     height: 40px;
   }
-
-  .pos-0 { top: 5%; left: 5%; }
-  .pos-1 { top: 3%; right: 5%; }
-  .pos-2 { bottom: 10%; left: 3%; }
-  .pos-3 { bottom: 8%; right: 5%; }
 }

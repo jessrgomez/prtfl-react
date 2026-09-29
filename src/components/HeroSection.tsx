@@ -6,7 +6,7 @@ import { projects } from '../data/projects'
 export const initialCode = `const developer = {
   role: 'Frontend Developer',
   experience: '8 years',
-  stack: ['Vue', 'React', 'JavaScript', 'REST APIs', 'HTML', 'CSS'],
+  stack: ['Vue', 'React', 'JavaScript', 'TypeScript', 'Node.js', 'Ionic', 'REST APIs', 'HTML', 'CSS'],
   available: true
 };`
 

@@ -1,5 +1,14 @@
 import { useEffect, useMemo, useRef } from 'react'
 import type * as THREE from 'three'
+import reactIcon from '../assets/icons/react.webp'
+import apiIcon from '../assets/icons/api.png'
+import vueIcon from '../assets/icons/vue.webp'
+import htmlIcon from '../assets/icons/html.webp'
+import cssIcon from '../assets/icons/css.webp'
+import jsIcon from '../assets/icons/javascript.png'
+import nodeIcon from '../assets/icons/node.webp'
+import tsIcon from '../assets/icons/ts.webp'
+import ionicIcon from '../assets/icons/ionic.webp'
 
 interface Props {
   stack?: string[]
@@ -8,30 +17,19 @@ interface Props {
 interface TechIcon {
   label: string
   svg: string | null
+  image?: string
 }
 
 const techIcons: Record<string, TechIcon> = {
-  vue: {
-    label: 'Vue',
-    svg: '<path fill="#41b883" d="M78.8 10.2L64 35.4 49.2 10.2H0l64 110 64-110z"/><path fill="#41b883" d="M78.8 10.2L64 35.4 49.2 10.2H25.6L64 76l38.4-65.8z"/><path fill="#35495e" d="M25.6 10.2L64 76l38.4-65.8H78.8L64 35.4 49.2 10.2z"/>'
-  },
-  html: {
-    label: 'HTML',
-    svg: '<path fill="#e34f26" d="M19.037 113.876L9.032 1.661h109.936l-10.016 112.198-45.019 12.48z"/><path fill="#ef652a" d="M64 116.8l36.378-10.086 8.559-96.053H64z"/><path fill="#ebebeb" d="M64 52.455H45.788L44.53 38.361H64V24.599H29.489l.263 2.969 2.693 30.225H64zm0 40.02l-.049.013-11.912-3.22-.761-8.533H39.683l1.499 16.79 21.818 6.051.047-.013z"/><path fill="#fff" d="M63.952 52.455v13.762h16.947l-1.597 17.849-15.35 4.143v14.222l27.947-7.765.208-2.333 3.293-36.833.269-2.966-2.214-.604z"/>'
-  },
-  css: {
-    label: 'CSS',
-    svg: '<path fill="#1572b6" d="M8.76 1l10.055 112.883 45.118 12.501 45.244-12.526L119.24 1z"/><path fill="#33a9dc" d="M64 116.8l36.378-10.086 8.559-96.053H64z"/><path fill="#fff" d="M64 52.455H29.499l.827 9.262H64zm0 37.02H43.972l.827 9.263H64z"/><path fill="#ebebeb" d="M64 24.599v13.762h37.59l.319-3.58.758-8.46L64 24.599zM29.499 52.455l.827 9.262H64V52.455zm19.473 37.02l.827 9.263H64v-9.263z"/><path fill="#fff" d="M64 65.997v13.762h33.689l-.285 3.19-.631 7.062L64 89.997zm0-27.398v13.762h36.756l-.285 3.19-.319 3.58H64z"/>'
-  },
-  js: {
-    label: 'JS',
-    svg: '<path fill="#f7df1e" d="M1.408 1.408h125.184v125.185H1.408z"/><path fill="#000" d="M116.347 96.736c-.369-2.27-1.875-4.18-3.965-5.725 3.037-1.73 5.25-4.198 5.25-8.465 0-4.552-2.889-7.402-7.514-7.402-5.064 0-7.797 2.562-8.373 6.335l-8.064-1.036c.188-6.636 5.414-11.957 16.572-11.957 10.98 0 16.965 5.064 16.965 12.518 0 6.07-2.985 9.889-7.514 13.123-3.037 2.089-4.847 3.408-5.544 5.725-.369 1.479-.184 2.746.553 3.78 1.106 1.479 3.408 2.271 5.544 2.271 2.562 0 4.658-.738 6.07-2.089 2.271-2.089 2.271-4.847 2.271-5.064h8.064c0 .553.092 4.382-1.291 7.514-1.661 3.408-5.25 5.544-9.889 6.636-4.382 1.106-9.336.553-12.518-1.291-3.408-2.089-5.25-5.25-5.544-9.336zM68.169 82.105c.369 2.27 1.875 4.18 3.965 5.725-2.985 1.73-5.25 4.198-5.25 8.465 0 4.552 2.889 7.402 7.514 7.402 5.064 0 7.797-2.562 8.373-6.335l8.064 1.036c-.188 6.636-5.414 11.957-16.572 11.957-10.98 0-16.965-5.064-16.965-12.518 0-6.07 2.985-9.889 7.514-13.123 3.037-2.089 4.847-3.408 5.544-5.725.369-1.479.184-2.746-.553-3.78-1.106-1.479-3.408-2.271-5.544-2.271-2.562 0-4.658.738-6.07 2.089-2.271 2.089-2.271 4.847-2.271 5.064h-8.064c0-.553-.092-4.382 1.291-7.514 1.661-3.408 5.25-5.544 9.889-6.636 4.382-1.106 9.336-.553 12.518 1.291 3.408 2.089 5.25 5.25 5.544 9.336z"/>'
-  },
-  react: { label: 'React', svg: null },
-  node: { label: 'Node', svg: null },
-  typescript: { label: 'TS', svg: null },
-  ionic: { label: 'Ionic', svg: null },
-  api: { label: 'API', svg: null }
+  vue: { label: 'Vue', svg: null, image: vueIcon },
+  html: { label: 'HTML', svg: null, image: htmlIcon },
+  css: { label: 'CSS', svg: null, image: cssIcon },
+  js: { label: 'JS', svg: null, image: jsIcon },
+  react: { label: 'React', svg: null, image: reactIcon },
+  node: { label: 'Node', svg: null, image: nodeIcon },
+  typescript: { label: 'TS', svg: null, image: tsIcon },
+  ionic: { label: 'Ionic', svg: null, image: ionicIcon },
+  api: { label: 'API', svg: null, image: apiIcon }
 }
 
 function normalizeTech(name: string): string | null {
@@ -48,25 +46,35 @@ function normalizeTech(name: string): string | null {
   return null
 }
 
-const positions = ['pos-0', 'pos-1', 'pos-2', 'pos-3', 'pos-4', 'pos-5']
+// Spreads any number of items evenly around an ellipse centered on the laptop,
+// instead of a fixed set of hand-placed CSS positions capped at a fixed count.
+function orbitPosition(index: number, total: number): { left: string; top: string } {
+  const angle = (index / total) * 2 * Math.PI - Math.PI / 2
+  const radiusX = 42
+  const radiusY = 40
+  const left = 50 + radiusX * Math.cos(angle)
+  const top = 50 + radiusY * Math.sin(angle)
+  return { left: `${left}%`, top: `${top}%` }
+}
 
 export default function DeveloperScene({ stack = ['Vue', 'HTML', 'CSS', 'JS'] }: Props) {
   const canvasEl = useRef<HTMLCanvasElement | null>(null)
 
-  const displayStack = useMemo(
-    () =>
-      (stack || []).slice(0, 6).map((name, i) => {
-        const key = normalizeTech(name)
-        const tech = key ? techIcons[key] : null
-        return {
-          key: `${name}-${i}`,
-          label: tech ? tech.label : name,
-          svg: tech ? tech.svg : null,
-          pos: positions[i] || 'pos-0'
-        }
-      }),
-    [stack]
-  )
+  const displayStack = useMemo(() => {
+    const entries = stack || []
+    return entries.map((name, i) => {
+      const key = normalizeTech(name)
+      const tech = key ? techIcons[key] : null
+      return {
+        key: `${name}-${i}`,
+        label: tech ? tech.label : name,
+        svg: tech ? tech.svg : null,
+        image: tech ? tech.image : undefined,
+        ...orbitPosition(i, entries.length),
+        delay: `${(i % 6) * 0.15}s`
+      }
+    })
+  }, [stack])
 
   useEffect(() => {
     let cleanup: (() => void) | null = null
@@ -270,13 +278,17 @@ export default function DeveloperScene({ stack = ['Vue', 'HTML', 'CSS', 'JS'] }:
   return (
     <div className="developer-scene">
       {displayStack.map((item) => (
-        <div key={item.key} className={`float-icon ${item.pos}`} aria-hidden="true">
-          {item.svg ? (
-            <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" dangerouslySetInnerHTML={{ __html: item.svg }}></svg>
-          ) : (
-            <div className="float-fallback">{item.label.slice(0, 2)}</div>
-          )}
-          <span className="float-label">{item.label}</span>
+        <div key={item.key} className="float-icon" style={{ left: item.left, top: item.top }} aria-hidden="true">
+          <div className="float-icon-body" style={{ animationDelay: item.delay }}>
+            {item.image ? (
+              <img src={item.image} alt={item.label} className="float-image" />
+            ) : item.svg ? (
+              <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" dangerouslySetInnerHTML={{ __html: item.svg }}></svg>
+            ) : (
+              <div className="float-fallback">{item.label.slice(0, 2)}</div>
+            )}
+            <span className="float-label">{item.label}</span>
+          </div>
         </div>
       ))}
 
