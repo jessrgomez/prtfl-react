@@ -190,6 +190,31 @@
       statusEl.style.color = isError ? '#f87171' : ''
     }
 
+    const INACTIVITY_LIMIT_MS = 60 * 1000
+    let inactivityTimer = null
+    let loggedIn = false
+
+    function logout(reason) {
+      loggedIn = false
+      clearTimeout(inactivityTimer)
+      localStorage.removeItem('cms-admin-token')
+      tokenInput.value = ''
+      entriesEl.innerHTML = ''
+      entriesEl.classList.add('hidden')
+      newEntryEl.classList.add('hidden')
+      setStatus(reason || '')
+    }
+
+    function resetInactivityTimer() {
+      if (!loggedIn) return
+      clearTimeout(inactivityTimer)
+      inactivityTimer = setTimeout(() => logout('Logged out due to inactivity.'), INACTIVITY_LIMIT_MS)
+    }
+
+    ;['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart'].forEach((event) => {
+      document.addEventListener(event, resetInactivityTimer)
+    })
+
     async function loadEntries() {
       localStorage.setItem('cms-admin-token', tokenInput.value)
       setStatus('Loading…')
@@ -203,6 +228,8 @@
         entriesEl.classList.remove('hidden')
         newEntryEl.classList.remove('hidden')
         setStatus('')
+        loggedIn = true
+        resetInactivityTimer()
       } catch (err) {
         entriesEl.innerHTML = ''
         entriesEl.classList.add('hidden')
