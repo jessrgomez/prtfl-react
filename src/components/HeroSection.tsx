@@ -110,7 +110,7 @@ export default function HeroSection({ code, onCodeChange }: Props) {
           >
             Get in Touch
           </a>
-          <a href="/Jessica-Gomez-CV.pdf" className="btn btn-outline" download>
+          <a href="/jessicargomez-cv.pdf" className="btn btn-outline" download>
             Download CV
           </a>
         </div>
