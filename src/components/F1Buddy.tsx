@@ -159,6 +159,8 @@ export default function F1Buddy() {
     resize()
 
     // x is the left edge, up the height above the bottom of the window.
+    // With Reduce Motion on, the car skips the drop and bounce and starts on the ground. It still drives
+    // (and drives away): the visitor asked for it with the button.
     const from = getF1Buddy().from ?? { x: viewWidth() - 120, y: 64 }
     const s = {
       x: clamp(from.x - w / 2, 0, Math.max(0, viewWidth() - w)),
@@ -166,8 +168,8 @@ export default function F1Buddy() {
       vx: 0,
       vup: reduced ? 0 : 7,
       dir: from.x > viewWidth() / 2 ? -1 : 1,
-      mode: (reduced ? 'park' : 'air') as Mode,
-      parked: reduced,
+      mode: (reduced ? 'drive' : 'air') as Mode,
+      parked: false,
       v: 0,
       target: 0,
       retarget: 0,
@@ -543,10 +545,6 @@ export default function F1Buddy() {
     }
     const leave = () => {
       setMenu(null)
-      if (reduced) {
-        finish()
-        return
-      }
       if (race.on) stopRace(false)
       s.leaving = true
       s.pit = null
@@ -821,7 +819,7 @@ export default function F1Buddy() {
     }
 
     hush()
-    if (reduced) say(touch ? 'Parked and ready. Tap me for the menu.' : 'Parked and ready. Click me for a pit stop.', 5)
+    if (reduced) say('Lights out and away we go!', 4)
     box.addEventListener('pointerenter', onEnter)
     box.addEventListener('pointerleave', onLeave)
     box.addEventListener('pointerdown', onDown)
