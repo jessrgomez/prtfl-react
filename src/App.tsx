@@ -9,6 +9,7 @@ import EducationSection from './components/EducationSection'
 import ContactSection from './components/ContactSection'
 import AppFooter from './components/AppFooter'
 import AiChatbot from './components/AiChatbot'
+import F1Buddy from './components/F1Buddy'
 
 function App() {
   const [codeText, setCodeText] = useState(initialCode)
@@ -46,6 +47,7 @@ function App() {
       </main>
       <AppFooter />
       <AiChatbot />
+      <F1Buddy />
     </div>
   )
 }

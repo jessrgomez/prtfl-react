@@ -4,7 +4,6 @@ const jobs = [
   {
     title: 'Frontend Developer',
     company: 'DigiPlus Interactive Corp.',
-    logo: 'DP',
     url: 'https://digiplus.com.ph/',
     period: 'November 2025 – Present',
     bullets: [
@@ -42,7 +41,6 @@ const jobs = [
   {
     title: 'VueJS Developer',
     company: 'ThinkBIT Solutions',
-    logo: 'TB',
     url: 'https://thinkbitsolutions.com/',
     period: 'July 2025 – October 2025',
     bullets: [
@@ -56,7 +54,6 @@ const jobs = [
   {
     title: 'Frontend Developer | Project Coordinator',
     company: 'Global JD Holdings Inc.',
-    logo: 'JD',
     url: 'https://www.linkedin.com/company/global-jd-holdings',
     period: 'December 2021 – June 2025',
     bullets: [
@@ -73,7 +70,6 @@ const jobs = [
   {
     title: 'Frontend Developer (Part-Time)',
     company: 'Ho Chi Minh, Vietnam',
-    logo: 'SV',
     url: '',
     period: 'September 2020 – February 2022',
     bullets: [
@@ -87,7 +83,6 @@ const jobs = [
   {
     title: 'Programmer & Systems Analyst',
     company: 'Dornier Technology Inc.',
-    logo: 'DT',
     url: 'https://dorniertechnology.com/',
     period: 'May 2018 – December 2021',
     bullets: [
@@ -139,9 +134,6 @@ export default function ExperienceSection() {
             <div className="timeline-card">
               <div className="timeline-header">
                 <div className="timeline-heading">
-                  <div className="company-logo" aria-hidden="true">
-                    {job.logo}
-                  </div>
                   <div>
                     <h3>{job.title}</h3>
                     {job.url ? (

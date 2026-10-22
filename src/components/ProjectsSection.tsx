@@ -1,6 +1,7 @@
 import { useMemo, useState, type MouseEvent } from 'react'
 import { useAnimateOnScroll } from '../composables/useAnimateOnScroll'
 import ProjectModal from './ProjectModal'
+import PitWallDownload from './PitWallDownload'
 import { projects, type Project } from '../data/projects'
 
 const industries = ['All', ...new Set(projects.flatMap((project) => project.industries))]
@@ -132,6 +133,7 @@ export default function ProjectsSection() {
           </article>
         ))}
       </div>
+      <PitWallDownload />
       <ProjectModal project={activeProject} onClose={closeCaseStudy} />
     </section>
   )
