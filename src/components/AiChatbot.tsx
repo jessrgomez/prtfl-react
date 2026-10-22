@@ -11,7 +11,7 @@ interface KnowledgeEntry {
   content: string
 }
 
-const suggestions = ['Experience', 'Skills', 'Projects', 'Contact', 'CV']
+const suggestions = ['Experiences', 'Skills', 'Projects', 'Contact', 'CV']
 
 // Empty in local dev (requests go through Vite's proxy to localhost:8787).
 // Set at build time to the deployed backend's URL for a static production
@@ -43,7 +43,7 @@ const knowledgeBase = [
   {
     keywords: ['experience', 'years', 'background', 'work history', 'career'],
     response:
-      "Jessica has 8 years of professional experience as a Frontend Developer, building responsive and scalable web applications across the Aviation, Travel, Enterprise, and Gaming industries. She's currently a Frontend Developer at DigiPlus Interactive Corp., working on their iGaming platform (AP). Check the Career section for the full timeline."
+      "Jessica has 8 years of professional experience as a Frontend Developer, building responsive and scalable web applications across the Aviation, Travel, Enterprise, and Gaming industries. She's currently a Frontend Developer at DigiPlus Interactive Corp., working on their iGaming platform (AP). Check the Experience section for the full timeline."
   },
   {
     keywords: ['skill', 'tech stack', 'technolog', 'stack', 'tools', 'language'],

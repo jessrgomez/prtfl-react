@@ -4,7 +4,7 @@
 export const pitWallReleasesUrl = 'https://github.com/jessrgomez/pit-wall-downloads/releases'
 
 export interface PitWallDownload {
-  os: 'windows' | 'ubuntu'
+  os: 'windows' | 'mac' | 'ubuntu'
   label: string
   system: string
   file: string
@@ -13,6 +13,8 @@ export interface PitWallDownload {
   url: string
   note: string
   command?: string
+  // A second build of the same version, such as the Intel Mac one.
+  other?: { label: string; size: string; url: string }
 }
 
 export const pitWallDownloads: PitWallDownload[] = [
@@ -25,6 +27,21 @@ export const pitWallDownloads: PitWallDownload[] = [
     size: '2.4 MB',
     url: `${pitWallReleasesUrl}/download/v1.2.0/PitWall-RB-Buddy-Setup-1.2.0.exe`,
     note: 'Run the installer; no admin rights needed. If SmartScreen says the app is unrecognised, click More info, then Run anyway.'
+  },
+  {
+    os: 'mac',
+    label: 'Download for Mac',
+    system: 'macOS 11 or later, Apple Silicon',
+    file: 'PitWall-RB-Buddy-1.2.0-arm64.dmg',
+    version: '1.2.0',
+    size: '94 MB',
+    url: `${pitWallReleasesUrl}/download/mac-v1.2.0/PitWall-RB-Buddy-1.2.0-arm64.dmg`,
+    note: 'Open the .dmg and drag Pit Wall RB Buddy to Applications. The first time, macOS blocks it: open System Settings > Privacy & Security and click Open Anyway.',
+    other: {
+      label: 'Intel Mac? Get the Intel .dmg',
+      size: '100 MB',
+      url: `${pitWallReleasesUrl}/download/mac-v1.2.0/PitWall-RB-Buddy-1.2.0-x64.dmg`
+    }
   },
   {
     os: 'ubuntu',

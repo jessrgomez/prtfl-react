@@ -15,6 +15,13 @@ function OsIcon({ os }: { os: Download['os'] }) {
       </svg>
     )
   }
+  if (os === 'mac') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+        <path d="M16.6 12.7c0-2.4 2-3.6 2.1-3.7-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-1.9-.9-3.2-.8-1.6 0-3.1.9-4 2.4-1.7 2.9-.4 7.2 1.2 9.6.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.1-.8 1.5 0 1.9.8 3.2.8 1.3 0 2.1-1.2 2.9-2.4.9-1.3 1.3-2.6 1.3-2.7 0 0-2.4-.9-2.4-3.8zM14.2 5.6c.7-.8 1.1-1.9 1-3-.9 0-2.1.6-2.7 1.4-.6.7-1.2 1.8-1 2.9 1 .1 2.1-.5 2.7-1.3z" />
+      </svg>
+    )
+  }
   // Ubuntu's circle of friends, simplified: a ring broken in front of each of the three heads.
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2">
@@ -90,6 +97,11 @@ export default function PitWallDownload() {
               </svg>
             </a>
             <p className="pitwall-note">{download.note}</p>
+            {download.other && (
+              <a className="pitwall-other" href={download.other.url} rel="noopener">
+                {download.other.label} <span className="pitwall-download-meta">· {download.other.size}</span>
+              </a>
+            )}
             {download.command && (
               <div className="pitwall-command">
                 <code>{download.command}</code>

@@ -478,6 +478,7 @@ textarea {
 
 .hero-cta {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
 }
 
@@ -651,6 +652,20 @@ textarea {
 .btn-lg {
   padding: 1rem 2rem;
   font-size: 1.1rem;
+}
+
+/* Square, icon-only button: the row stretches it to the other buttons' height. */
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  padding: 0;
+}
+
+.btn-icon svg {
+  width: 1.4em;
+  height: 1.4em;
 }
 
 /* About */
@@ -2398,6 +2413,18 @@ textarea {
   color: var(--text-muted);
   font-size: 0.85rem;
   line-height: 1.5;
+}
+
+.pitwall-other {
+  display: inline-block;
+  margin-top: 0.4rem;
+  color: var(--accent);
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.pitwall-other:hover {
+  text-decoration: underline;
 }
 
 .pitwall-command {

@@ -125,7 +125,7 @@ export default function ExperienceSection() {
   return (
     <section id="experience" ref={target} className={`section experience ${isVisible ? 'animate-in' : ''}`}>
       <h2 className="section-title">
-        <span className="title-num">04.</span> Career
+        <span className="title-num">04.</span> Experiences
       </h2>
       <div className="timeline">
         {jobs.map((job) => (

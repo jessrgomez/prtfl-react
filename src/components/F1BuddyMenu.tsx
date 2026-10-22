@@ -139,7 +139,7 @@ export default function F1BuddyMenu({ at, status, car, onAction, onClose }: Prop
       <button className="f1-menu-row" type="button" onClick={() => onAction('download')}>
         <Icon name="download" />
         <span className="f1-menu-t">Download the app</span>
-        <span className="f1-menu-note">Windows, Ubuntu</span>
+        <span className="f1-menu-note">Win, Mac, Ubuntu</span>
       </button>
 
       <div className="f1-menu-label">MAX</div>

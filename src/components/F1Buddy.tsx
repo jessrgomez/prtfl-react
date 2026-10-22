@@ -29,7 +29,7 @@ const RADIO_LINES = [
   'DRS enabled. Go, go, go!', 'Tyres are in the window. Keep pushing.', 'Stay out, stay out.', 'Plan A. Plan A.',
   "Let's go, let's go!", 'Get in there!', 'Fastest lap. Beautiful.', 'Click me to box, drag me to fly, right-click for the menu.',
   "I'm Pit Wall, Jessica's desktop race engineer. I radio her when tasks are due.",
-  'On the desktop I run on PowerShell and WPF, or Electron on Ubuntu.'
+  'On the desktop I run on PowerShell and WPF, or Electron on Ubuntu and Mac.'
 ]
 const DRIVER_OUT_LINES = ['Stretching my legs.', 'Car is parked. Grab some water.', 'Back in a minute. Coffee first.',
   'Taking a breather. You should too.', 'Tyres cooling, so am I.']
