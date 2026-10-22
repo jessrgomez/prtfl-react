@@ -6,7 +6,8 @@ import { LIVERIES, TYRES, applyCarFrame, bindCar, carSvg, type Compound, type Em
 
 // The Pit Wall desktop car as a buddy for the page: it drops out of the nav button, lands on the bottom
 // of the window and drives back and forth. Hover for team radio, click for a pit stop, drag to pick it
-// up and throw it, right-click (or long-press) for the menu: moods, Race mode, the driver getting out.
+// up and throw it, right-click for the menu: moods, Race mode, the driver getting out. On a touch screen
+// a tap opens the menu instead, as there is no right-click (the pit stop is in the menu).
 // The motion comes from the desktop app (ubuntu/main/car.js), whose numbers are per 33 ms tick at a
 // 300 px car, so each frame advances by however many ticks have passed, scaled to this car's size.
 
@@ -89,6 +90,7 @@ export default function F1Buddy() {
   const { active, park } = useF1Buddy()
   const [shown, setShown] = useState(false)
   const [menu, setMenu] = useState<Menu | null>(null)
+  const menuOpenRef = useRef(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const carRef = useRef<HTMLDivElement>(null)
   const bubbleRef = useRef<HTMLDivElement>(null)
@@ -99,6 +101,10 @@ export default function F1Buddy() {
 
   // Switched off, the car stays on screen until it has driven away (then sets shown back to false).
   if (active && !shown) setShown(true)
+
+  useEffect(() => {
+    menuOpenRef.current = menu !== null
+  }, [menu])
 
   const closeMenu = useCallback((refocus: boolean) => {
     setMenu(null)
@@ -130,7 +136,7 @@ export default function F1Buddy() {
     })
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const touch = window.matchMedia('(hover: none)').matches
-    const menuVerb = touch ? 'Long-press' : 'Right-click'
+    const menuVerb = touch ? 'Tap' : 'Right-click'
     const viewWidth = () => document.documentElement.clientWidth
     const viewHeight = () => window.innerHeight
 
@@ -195,7 +201,8 @@ export default function F1Buddy() {
     }
     const race = { on: false, finished: false, restartAt: 0, position: 0, check: 0 }
     let drag: Drag | null = null
-    let press = 0
+    let menuWasOpen = false
+    let touchTap = false
     let done = false
     let raf = 0
 
@@ -678,7 +685,7 @@ export default function F1Buddy() {
         if (s.hinted) say(radioLine(), 5, 'chat')
         else {
           s.hinted = true
-          say(touch ? 'Radio check! Tap me to box, drag me to fly, long-press for the menu.' : 'Radio check! Click me to box, drag me to fly, right-click for the menu.', 8, 'chat')
+          say(touch ? 'Radio check! Tap me for the menu, drag me to fly.' : 'Radio check! Click me to box, drag me to fly, right-click for the menu.', 8, 'chat')
         }
         s.nextChat = s.k + (40000 + rand(20000)) / TICK
       }
@@ -741,18 +748,13 @@ export default function F1Buddy() {
     }
     const onDown = (e: PointerEvent) => {
       if (e.button !== 0 || s.leaving) return
+      // The menu leaves presses on the car to the car: one closes it, so a second tap toggles it shut.
+      menuWasOpen = menuOpenRef.current
+      touchTap = false
+      if (menuWasOpen) setMenu(null)
       box.setPointerCapture(e.pointerId)
       const top = viewHeight() - s.up - h
       drag = { id: e.pointerId, ox: e.clientX - s.x, oy: e.clientY - top, sx: e.clientX, sy: e.clientY, moved: 0, lx: e.clientX, ly: e.clientY, lt: e.timeStamp, vx: 0, vy: 0 }
-      // A long press on a touch screen opens the menu, as a right-click does.
-      if (e.pointerType !== 'mouse') {
-        const id = e.pointerId
-        press = window.setTimeout(() => {
-          if (!drag || drag.id !== id || drag.moved >= 6) return
-          drag = null
-          openMenu(e.clientX, e.clientY)
-        }, 550)
-      }
     }
     const onMove = (e: PointerEvent) => {
       if (!drag || e.pointerId !== drag.id) return
@@ -760,7 +762,6 @@ export default function F1Buddy() {
       if (s.mode !== 'drag') {
         // Not while the car is up on the jacks or the driver is out.
         if (drag.moved < 6 || s.mode === 'pit' || s.driverOut || s.driverAnim) return
-        window.clearTimeout(press)
         s.mode = 'drag'
         s.v = 0
         say(pick(GRAB_LINES), 30, 'drag')
@@ -776,7 +777,6 @@ export default function F1Buddy() {
       s.up = clamp(viewHeight() - (e.clientY - drag.oy) - h, 0, Math.max(0, viewHeight() - h))
     }
     const release = (e: PointerEvent, click: boolean) => {
-      window.clearTimeout(press)
       if (box.hasPointerCapture(e.pointerId)) box.releasePointerCapture(e.pointerId)
       if (!drag || e.pointerId !== drag.id) return
       const d = drag
@@ -790,13 +790,23 @@ export default function F1Buddy() {
         if (Math.abs(s.vx) > 2) s.dir = Math.sign(s.vx)
         if (s.emote) s.emote.until = 0
         if (s.bubbleKind === 'drag') hush()
-      } else if (click && d.moved < 6) tapCar()
+      } else if (click && d.moved < 6) {
+        if (e.pointerType === 'mouse') tapCar()
+        else touchTap = !menuWasOpen
+      }
     }
     const onUp = (e: PointerEvent) => release(e, true)
     const onCancel = (e: PointerEvent) => release(e, false)
+    // A tap opens the menu on the click that follows it, not on pointerup, so that click can't land on
+    // the menu. The card goes above the car rather than over the finger (its bottom edge sits 14 px below
+    // the point it opens at), leaving the car clear to tap again and close it.
+    const onClick = (e: MouseEvent) => {
+      if (!touchTap) return
+      touchTap = false
+      openMenu(e.clientX, box.getBoundingClientRect().top - 22)
+    }
     const onContextMenu = (e: MouseEvent) => {
       e.preventDefault()
-      window.clearTimeout(press)
       if (s.mode === 'drag') return
       drag = null
       // From the keyboard (context menu key, Shift+F10) there is no pointer: open it over the car.
@@ -811,13 +821,14 @@ export default function F1Buddy() {
     }
 
     hush()
-    if (reduced) say('Parked and ready. Click me for a pit stop.', 5)
+    if (reduced) say(touch ? 'Parked and ready. Tap me for the menu.' : 'Parked and ready. Click me for a pit stop.', 5)
     box.addEventListener('pointerenter', onEnter)
     box.addEventListener('pointerleave', onLeave)
     box.addEventListener('pointerdown', onDown)
     box.addEventListener('pointermove', onMove)
     box.addEventListener('pointerup', onUp)
     box.addEventListener('pointercancel', onCancel)
+    box.addEventListener('click', onClick)
     box.addEventListener('contextmenu', onContextMenu)
     box.addEventListener('keydown', onKey)
     window.addEventListener('resize', resize)
@@ -827,7 +838,6 @@ export default function F1Buddy() {
     return () => {
       done = true
       cancelAnimationFrame(raf)
-      window.clearTimeout(press)
       actRef.current = null
       box.removeEventListener('pointerenter', onEnter)
       box.removeEventListener('pointerleave', onLeave)
@@ -835,6 +845,7 @@ export default function F1Buddy() {
       box.removeEventListener('pointermove', onMove)
       box.removeEventListener('pointerup', onUp)
       box.removeEventListener('pointercancel', onCancel)
+      box.removeEventListener('click', onClick)
       box.removeEventListener('contextmenu', onContextMenu)
       box.removeEventListener('keydown', onKey)
       window.removeEventListener('resize', resize)
@@ -876,7 +887,7 @@ export default function F1Buddy() {
           aria-label="F1 Buddy, the Pit Wall car. Press Enter for a pit stop, or the context menu key for more."
         ></div>
       </div>
-      {menu && <F1BuddyMenu at={menu.at} status={menu.status} onAction={runMenuAction} onClose={closeMenu} />}
+      {menu && <F1BuddyMenu at={menu.at} status={menu.status} car={carRef} onAction={runMenuAction} onClose={closeMenu} />}
     </>
   )
 }

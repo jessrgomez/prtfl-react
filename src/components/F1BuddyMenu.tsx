@@ -1,7 +1,7 @@
-import { useEffect, useLayoutEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useRef, type ReactNode, type RefObject } from 'react'
 import { TYRES, type Compound, type Mood } from '../utils/pitWallCar'
 
-// The card that opens when you right-click (or long-press) the F1 Buddy, after Pit Wall's
+// The card that opens when you right-click (or, on a touch screen, tap) the F1 Buddy, after Pit Wall's
 // renderer/menu.html. The desktop-only parts (Claude, tasks, tickets, Lark) are left out.
 
 export interface BuddyStatus {
@@ -18,6 +18,7 @@ export type BuddyAction = 'about' | 'download' | 'mood' | 'drive' | 'race' | 'dr
 interface Props {
   at: { x: number; y: number }
   status: BuddyStatus
+  car: RefObject<HTMLElement | null>
   onAction: (name: BuddyAction, arg?: string) => void
   onClose: (refocus: boolean) => void
 }
@@ -81,7 +82,7 @@ const moods: [Mood, string, string][] = [
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(v, hi))
 
-export default function F1BuddyMenu({ at, status, onAction, onClose }: Props) {
+export default function F1BuddyMenu({ at, status, car, onAction, onClose }: Props) {
   const cardRef = useRef<HTMLDivElement>(null)
 
   // Opens just above the pointer, like the desktop card, kept inside the window. (Layout size, not
@@ -97,8 +98,10 @@ export default function F1BuddyMenu({ at, status, onAction, onClose }: Props) {
   }, [at])
 
   useEffect(() => {
+    // A press on the car is the car's to handle (a tap there toggles the menu).
     const handlePointerDown = (event: PointerEvent) => {
-      if (!cardRef.current?.contains(event.target as Node)) onClose(false)
+      const target = event.target as Node
+      if (!cardRef.current?.contains(target) && !car.current?.contains(target)) onClose(false)
     }
     const handleKeydown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose(true)
@@ -112,7 +115,7 @@ export default function F1BuddyMenu({ at, status, onAction, onClose }: Props) {
       document.removeEventListener('keydown', handleKeydown)
       window.removeEventListener('resize', handleResize)
     }
-  }, [onClose])
+  }, [car, onClose])
 
   return (
     <div ref={cardRef} className="f1-menu" role="dialog" aria-label="F1 Buddy menu" onContextMenu={(e) => e.preventDefault()}>
